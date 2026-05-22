@@ -1,0 +1,2764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Media & Consumer Purchasing — Inderpreet Singh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500;1,9..144,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:       #F2ECDE;
+  --paper-2:     #E9E1CE;
+  --paper-3:     #DED4BD;
+  --ink:         #1B1714;
+  --ink-2:       #3A332B;
+  --muted:       #7A7064;
+  --muted-2:     #9A9082;
+  --hairline:    #C8BFAB;
+  --hairline-2:  #DDD4BF;
+  --vermillion:  #D63E2A;
+  --vermillion-2:#B53321;
+  --teal:        #1F505F;
+  --saffron:     #DDA22B;
+  --moss:        #4D6E4F;
+  --plum:        #6B3A52;
+  --serif: 'Fraunces', 'Times New Roman', Georgia, serif;
+  --sans:  'DM Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --mono:  'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.5;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* paper grain */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1, 0 0 0 0 0.09, 0 0 0 0 0.07, 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* TOPBAR — hidden per user preference */
+.topbar { display: none; }
+.tb-brand {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.tb-brand .v { color: var(--vermillion); }
+.tb-meta {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-left: 18px;
+}
+.tb-spacer { flex: 1; }
+
+.section-nav { position: relative; flex-shrink: 0; }
+.sn-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 14px;
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  border-radius: 100px;
+  cursor: pointer;
+  font-family: var(--mono);
+  transition: all 180ms var(--ease);
+}
+.sn-trigger:hover, .section-nav.open .sn-trigger {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.sn-counter { font-size: 11px; font-weight: 600; }
+.sn-counter #page-indicator { color: var(--vermillion); font-weight: 700; }
+.sn-counter .sn-sep { opacity: 0.5; margin: 0 2px; }
+.sn-divider { width: 1px; height: 14px; background: var(--hairline); display: inline-block; }
+.sn-trigger:hover .sn-divider, .section-nav.open .sn-divider { background: rgba(255,255,255,0.18); }
+.sn-label {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--ink-2);
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sn-trigger:hover .sn-label, .section-nav.open .sn-label { color: var(--paper); }
+.sn-chev { font-size: 10px; opacity: 0.6; transition: transform 240ms var(--ease); }
+.section-nav.open .sn-chev { transform: rotate(180deg); }
+.sn-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 8px;
+  padding: 8px;
+  min-width: 280px;
+  max-height: 70vh;
+  overflow-y: auto;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.28);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  opacity: 0;
+  transform: translateY(-6px) scale(0.97);
+  transform-origin: top right;
+  pointer-events: none;
+  transition: opacity 200ms var(--ease), transform 200ms var(--ease);
+}
+.section-nav.open .sn-menu {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.dm-item {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 10px;
+  align-items: baseline;
+  padding: 8px 10px;
+  background: transparent;
+  border: none;
+  color: var(--paper);
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: left;
+  font-family: var(--sans);
+  transition: background 160ms var(--ease);
+  width: 100%;
+}
+.dm-item:hover { background: rgba(255,255,255,0.06); }
+.dm-item.active { background: var(--vermillion); }
+.dm-num {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: rgba(244, 239, 230, 0.45);
+}
+.dm-item.active .dm-num { color: var(--paper); font-weight: 700; }
+.dm-name {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+/* MAIN */
+.main {
+  width: 100vw;
+  height: 100vh;
+  margin-top: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: auto;
+  scrollbar-color: var(--ink) var(--paper-2);
+}
+.main::-webkit-scrollbar { width: 18px; }
+.main::-webkit-scrollbar-track { background: var(--paper-2); border-left: 1px solid var(--hairline-2); }
+.main::-webkit-scrollbar-thumb {
+  background: var(--ink);
+  border: 4px solid var(--paper-2);
+  border-radius: 100px;
+  min-height: 80px;
+}
+.main::-webkit-scrollbar-thumb:hover { background: var(--vermillion); }
+
+/* SECTION SHELL */
+.section {
+  scroll-snap-align: start;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  max-height: 100vh;
+  padding: 40px 56px 56px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.sec-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.sec-eyebrow .num { color: var(--vermillion); font-weight: 700; }
+.sec-eyebrow .dot { width: 4px; height: 4px; background: var(--hairline); border-radius: 50%; }
+.sec-eyebrow .rule { flex: 1; height: 1px; background: var(--hairline); max-width: 80px; }
+.sec-title {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(32px, 4.4vw, 60px);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin-bottom: 14px;
+  font-variation-settings: "SOFT" 30, "opsz" 144;
+}
+.sec-title em {
+  font-style: italic;
+  color: var(--vermillion);
+  font-variation-settings: "SOFT" 100, "opsz" 144;
+}
+.sec-lede {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(16px, 1.25vw, 19px);
+  line-height: 1.45;
+  color: var(--ink-2);
+  max-width: 820px;
+  margin-bottom: 26px;
+  font-variation-settings: "SOFT" 100, "opsz" 24;
+}
+.sec-lede em { font-style: italic; }
+
+.next-btn {
+  position: absolute;
+  bottom: 22px;
+  right: 56px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 14px 22px 14px 24px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 2px;
+  transition: all 240ms var(--ease);
+}
+.next-btn:hover {
+  background: var(--vermillion);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(214, 62, 42, 0.28);
+}
+.next-btn .arrow { font-family: var(--sans); font-size: 14px; transition: transform 240ms var(--ease); }
+.next-btn:hover .arrow { transform: translateY(2px); }
+
+/* HERO */
+.s-hero { padding: 0 88px; justify-content: center; }
+.hero-frame { max-width: 1100px; position: relative; }
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 36px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; height: 1px; width: 28px; background: var(--hairline);
+}
+.hero-eyebrow::after { flex: 1; max-width: 140px; }
+.hero-title {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(56px, 9vw, 132px);
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 144;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--vermillion);
+  font-weight: 600;
+  font-variation-settings: "SOFT" 100, "opsz" 144;
+}
+.hero-lede {
+  margin-top: 38px;
+  font-family: var(--serif);
+  font-size: clamp(18px, 1.5vw, 22px);
+  line-height: 1.45;
+  color: var(--ink-2);
+  max-width: 740px;
+  font-variation-settings: "SOFT" 60, "opsz" 24;
+}
+.hero-author {
+  margin-top: 40px;
+  display: flex;
+  gap: 32px;
+  align-items: baseline;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.hero-author strong { color: var(--ink); font-weight: 700; }
+.hero-author .dot { width: 3px; height: 3px; background: var(--vermillion); border-radius: 50%; }
+.hero-cta { margin-top: 52px; }
+.begin-btn {
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 18px 32px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  border-radius: 2px;
+  transition: all 240ms var(--ease);
+}
+.begin-btn:hover {
+  background: var(--vermillion);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(214, 62, 42, 0.32);
+}
+.begin-btn .arrow { font-family: var(--sans); font-size: 15px; transition: transform 240ms var(--ease); }
+.begin-btn:hover .arrow { transform: translateY(2px); }
+
+.hero-corner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  text-align: right;
+  line-height: 1.8;
+}
+.hero-corner .v { color: var(--vermillion); font-weight: 700; }
+
+/* Shared icon style */
+.ic {
+  width: 38px;
+  height: 38px;
+  stroke: var(--vermillion);
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+.ic.ink { stroke: var(--ink); }
+
+/* CONTEXT / objectives grid */
+.obj-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr 1fr;
+  gap: 1px;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+  margin-top: 8px;
+  flex: 1;
+}
+.obj-card {
+  background: var(--paper);
+  padding: 30px 30px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.obj-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--vermillion);
+  font-weight: 700;
+}
+.obj-text {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 23px;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 30;
+  margin-top: auto;
+}
+
+/* THEN-NOW DIAGRAM */
+.tn-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px;
+  flex: 1;
+  align-items: stretch;
+  margin-top: 12px;
+}
+.tn-col {
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  padding: 28px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+.tn-col.now { background: var(--paper-2); border-color: var(--vermillion); }
+.tn-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.tn-col.now .tn-tag { color: var(--vermillion); }
+.tn-flow { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; flex: 1; }
+.tn-step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.3;
+  color: var(--ink-2);
+  font-variation-settings: "SOFT" 60, "opsz" 18;
+}
+.tn-step::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--muted);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.tn-col.now .tn-step::before { background: var(--vermillion); }
+.tn-arrow {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--muted-2);
+  margin: 2px 0 2px 18px;
+  letter-spacing: 0;
+}
+
+/* METHODOLOGY diagram */
+.meth-layout {
+  display: grid;
+  grid-template-columns: 1fr 0.8fr;
+  gap: 40px;
+  flex: 1;
+  margin-top: 12px;
+  align-items: start;
+}
+.meth-diagram {
+  background: var(--paper-2);
+  border: 1px solid var(--hairline);
+  padding: 32px;
+  position: relative;
+  min-height: 440px;
+}
+.md-source {
+  position: absolute;
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  padding: 16px 20px;
+  border-radius: 4px;
+  width: 200px;
+}
+.md-source.primary { top: 28px; left: 32px; border-color: var(--vermillion); }
+.md-source.secondary { top: 28px; right: 32px; }
+.md-source .ttl {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.md-source.secondary .ttl { color: var(--muted); }
+.md-source .what {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.25;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 24;
+}
+.md-source .how {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+.md-merge {
+  position: absolute;
+  bottom: 92px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 14px 22px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.md-out {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--vermillion);
+  text-align: center;
+  font-variation-settings: "SOFT" 100, "opsz" 18;
+}
+.md-line {
+  position: absolute;
+  background: var(--hairline);
+  z-index: 0;
+}
+.md-line.l1 { top: 90px; left: 132px; width: 1px; height: 200px; }
+.md-line.l2 { top: 90px; right: 132px; width: 1px; height: 200px; }
+.md-line.l3 { top: 290px; left: 132px; right: 132px; height: 1px; }
+.md-line.l4 { top: 290px; left: 50%; width: 1px; height: 32px; background: var(--vermillion); }
+.meth-side { display: flex; flex-direction: column; gap: 18px; }
+.meth-side h4 {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.meth-side p {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  font-variation-settings: "SOFT" 60, "opsz" 18;
+}
+
+/* STAT slides */
+.stat-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 56px;
+  flex: 1;
+  margin-top: 16px;
+  align-items: start;
+}
+.stat-big {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(110px, 16vw, 220px);
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+  color: var(--vermillion);
+  font-style: italic;
+  font-variation-settings: "SOFT" 30, "opsz" 144;
+}
+.stat-big sup {
+  font-size: 0.32em;
+  font-style: normal;
+  vertical-align: top;
+  color: var(--ink);
+  font-weight: 500;
+  margin-left: 6px;
+}
+.stat-label {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 14px;
+  margin-bottom: 24px;
+}
+.stat-explain {
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  margin-bottom: 14px;
+  font-variation-settings: "SOFT" 60, "opsz" 18;
+}
+.stat-explain em { font-style: italic; color: var(--vermillion); }
+
+/* Bar chart for platform usage */
+.bars { margin-top: 8px; display: flex; flex-direction: column; gap: 12px; }
+.bar-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 56px;
+  gap: 14px;
+  align-items: center;
+}
+.bar-name {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 17px;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 24;
+}
+.bar-track {
+  height: 22px;
+  background: var(--paper-2);
+  border: 1px solid var(--hairline-2);
+  position: relative;
+  border-radius: 2px;
+}
+.bar-fill {
+  height: 100%;
+  background: var(--vermillion);
+  border-radius: 1px;
+}
+.bar-fill.dim { background: var(--ink-2); }
+.bar-val {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+  text-align: right;
+  letter-spacing: -0.01em;
+}
+
+/* DRIVERS chart */
+.drivers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+  margin-top: 12px;
+}
+.driver {
+  background: var(--paper);
+  padding: 24px 22px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.driver.lead { background: var(--paper-2); border-bottom: 3px solid var(--vermillion); }
+.driver-pct {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 56px;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 72;
+}
+.driver.lead .driver-pct { color: var(--vermillion); font-style: italic; }
+.driver-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.driver.lead .driver-name { color: var(--vermillion); font-weight: 700; }
+.driver-note {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-2);
+  margin-top: 6px;
+}
+
+/* CASE STUDY */
+.cs-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 48px;
+  flex: 1;
+  margin-top: 12px;
+}
+.cs-block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cs-brand {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 64px;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 96;
+}
+.cs-brand em { font-style: italic; color: var(--vermillion); }
+.cs-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  font-weight: 700;
+}
+.cs-body {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  font-variation-settings: "SOFT" 60, "opsz" 18;
+}
+.cs-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.cs-pillar {
+  background: var(--paper);
+  border-left: 3px solid var(--vermillion);
+  padding: 14px 18px;
+}
+.cs-pillar .h {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.cs-pillar .b {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.cs-result {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 18px 22px;
+  margin-top: auto;
+}
+.cs-result .r-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--saffron);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.cs-result .r-text {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.4;
+  font-variation-settings: "SOFT" 60, "opsz" 18;
+}
+.cs-result .r-text em { color: var(--saffron); font-style: italic; }
+
+/* FUNNEL diagram */
+.funnel-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+}
+.funnel {
+  width: 100%;
+  max-width: 1000px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  align-items: stretch;
+}
+.fnl-stage {
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  padding: 22px 16px 24px;
+  text-align: left;
+  position: relative;
+}
+.fnl-stage::after {
+  content: '→';
+  position: absolute;
+  right: -18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--mono);
+  font-size: 18px;
+  color: var(--vermillion);
+  z-index: 2;
+}
+.fnl-stage:last-child::after { display: none; }
+.fnl-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--vermillion);
+  font-weight: 700;
+}
+.fnl-h {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-top: 8px;
+  font-variation-settings: "SOFT" 30, "opsz" 30;
+}
+.fnl-b {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-2);
+  margin-top: 8px;
+}
+
+/* FINDINGS */
+.find-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 14px;
+  flex: 1;
+  margin-top: 12px;
+}
+.find {
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  padding: 22px 24px;
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+}
+.find-n {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 42px;
+  line-height: 1;
+  color: var(--vermillion);
+  font-variation-settings: "SOFT" 100, "opsz" 48;
+  min-width: 38px;
+}
+.find-t {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.35;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 60, "opsz" 18;
+}
+.find-t em { color: var(--vermillion); font-style: italic; }
+
+/* RECS grid */
+.rec-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 1fr 1fr;
+  gap: 1px;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+  flex: 1;
+  margin-top: 12px;
+}
+.rec {
+  background: var(--paper);
+  padding: 26px 26px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rec .ic { margin-bottom: 16px; }
+.rec-n {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  color: var(--vermillion);
+  font-weight: 700;
+}
+.rec-h {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 30;
+  margin-top: 2px;
+}
+.rec-b {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  margin-top: auto;
+}
+
+/* LIMITATIONS - new category style */
+.lim-cats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+  margin-top: 8px;
+}
+.lim-cat {
+  background: var(--paper);
+  padding: 28px 26px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.lim-cat .ic { margin-bottom: 10px; }
+.lim-cat .label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  font-weight: 700;
+}
+.lim-cat .h {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 30;
+}
+.lim-cat .pts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+.lim-cat .pt {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-2);
+  padding-left: 14px;
+  position: relative;
+}
+.lim-cat .pt::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 6px;
+  height: 1px;
+  background: var(--vermillion);
+}
+.lim-footer {
+  background: var(--paper-2);
+  border-left: 3px solid var(--vermillion);
+  padding: 18px 24px;
+  margin-top: 20px;
+}
+.lim-footer .h {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.lim-footer .b {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--ink-2);
+  font-style: italic;
+  font-variation-settings: "SOFT" 100, "opsz" 18;
+}
+
+/* SHIFT timeline */
+.shift-timeline {
+  margin-top: 28px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.st-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+  flex: 1;
+}
+.st-era {
+  background: var(--paper);
+  padding: 26px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+.st-era.now { background: var(--paper-2); }
+.st-era .yr {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  font-weight: 700;
+}
+.st-era.now .yr { color: var(--vermillion); }
+.st-era .name {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 36;
+  font-style: italic;
+}
+.st-era.now .name { color: var(--vermillion); }
+.st-era .chan {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.7;
+}
+.st-era .who {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--hairline-2);
+  font-style: italic;
+}
+.st-icon {
+  margin: 18px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex: 1;
+}
+.st-icon svg {
+  width: 78px;
+  height: 78px;
+  stroke: var(--muted);
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.st-era.now .st-icon svg { stroke: var(--vermillion); }
+.st-arc {
+  margin-top: -1px;
+  height: 56px;
+  width: 100%;
+}
+
+/* FINDINGS — add small icon room */
+.find {
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  padding: 22px 24px;
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+.find .ic { width: 38px; height: 38px; margin-bottom: 0; margin-top: 2px; flex-shrink: 0; }
+.find-t strong {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-style: italic;
+  color: var(--vermillion);
+}
+
+/* LIMITATIONS */
+.lim-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 48px;
+  flex: 1;
+  margin-top: 12px;
+}
+.lim-list { display: flex; flex-direction: column; gap: 12px; }
+.lim-item {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 14px;
+  align-items: baseline;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--hairline-2);
+}
+.lim-item:last-child { border-bottom: none; }
+.lim-n {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--vermillion);
+  letter-spacing: 0.08em;
+}
+.lim-t {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  font-variation-settings: "SOFT" 60, "opsz" 18;
+}
+.lim-side {
+  background: var(--paper-2);
+  border-left: 3px solid var(--vermillion);
+  padding: 22px 26px;
+  align-self: start;
+}
+.lim-side h4 {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.lim-side p {
+  font-family: var(--serif);
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  font-style: italic;
+  font-variation-settings: "SOFT" 100, "opsz" 18;
+}
+
+/* CONCLUSION */
+.s-closing { padding: 0 88px; justify-content: center; }
+.closing-frame { max-width: 1000px; }
+.closing-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 32px;
+  display: flex; align-items: center; gap: 18px;
+}
+.closing-meta::before { content: ''; height: 1px; width: 40px; background: var(--vermillion); }
+.closing-title {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(56px, 8vw, 108px);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 144;
+}
+.closing-title em {
+  font-style: italic;
+  color: var(--vermillion);
+  font-weight: 600;
+}
+.closing-sub {
+  font-family: var(--serif);
+  font-size: clamp(17px, 1.4vw, 21px);
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 760px;
+  margin-top: 28px;
+  font-variation-settings: "SOFT" 60, "opsz" 24;
+}
+
+/* REFERENCES */
+.ref-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 40px;
+  flex: 1;
+  margin-top: 12px;
+  align-content: start;
+}
+.ref-item {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--hairline-2);
+  display: flex;
+  gap: 10px;
+}
+.ref-item .n {
+  color: var(--vermillion);
+  font-weight: 700;
+  min-width: 22px;
+}
+.ref-item .src strong { color: var(--ink); font-weight: 600; }
+
+/* SURVEY INSTRUMENT */
+.q-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  flex: 1;
+  margin-top: 12px;
+  align-content: start;
+}
+.q-card {
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  padding: 18px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  border-top: 3px solid var(--muted);
+}
+.q-card[data-bucket="usage"] { border-top-color: var(--teal); }
+.q-card[data-bucket="ads"] { border-top-color: var(--saffron); }
+.q-card[data-bucket="content"] { border-top-color: var(--moss); }
+.q-card[data-bucket="decision"] { border-top-color: var(--vermillion); }
+.q-card[data-bucket="brand"] { border-top-color: var(--plum); }
+.q-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  font-weight: 700;
+}
+.q-text {
+  font-family: var(--serif);
+  font-size: 15.5px;
+  line-height: 1.3;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 24;
+}
+.q-tag {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: auto;
+}
+.q-legend {
+  display: flex;
+  gap: 18px;
+  margin-top: 18px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+.q-legend .swatch {
+  display: inline-block;
+  width: 12px;
+  height: 3px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* TRUST PYRAMID */
+.trust-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 48px;
+  flex: 1;
+  margin-top: 12px;
+  align-items: center;
+  min-width: 0;
+}
+.trust-pyramid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: 100%;
+}
+.tp-row {
+  padding: 14px 20px;
+  font-family: var(--serif);
+  font-weight: 600;
+  text-align: center;
+  color: var(--paper);
+  font-variation-settings: "SOFT" 30, "opsz" 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-radius: 2px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.tp-row .tp-name { font-size: 18px; }
+.tp-row .tp-pct {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  background: rgba(255,255,255,0.18);
+  padding: 4px 10px;
+  border-radius: 2px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.tp-1 { background: var(--vermillion); width: 56%; }
+.tp-2 { background: var(--ink); width: 72%; opacity: 0.85; }
+.tp-3 { background: var(--ink); width: 86%; opacity: 0.55; }
+.tp-4 { background: var(--ink); width: 100%; opacity: 0.32; }
+.trust-side { display: flex; flex-direction: column; gap: 16px; }
+.trust-side h4 {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.trust-side p {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  font-variation-settings: "SOFT" 60, "opsz" 18;
+}
+.trust-side p em { color: var(--vermillion); font-style: italic; }
+
+/* BROADCAST vs DIALOGUE (SVG) */
+.conv-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 40px;
+  flex: 1;
+  margin-top: 12px;
+  align-items: stretch;
+}
+.conv-panel {
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  padding: 26px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+.conv-panel.now { background: var(--paper-2); border-color: var(--vermillion); }
+.conv-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+}
+.conv-panel.now .conv-tag { color: var(--vermillion); }
+.conv-h {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 48;
+}
+.conv-h em { font-style: italic; color: var(--vermillion); }
+.conv-svg { width: 100%; flex: 1; min-height: 220px; max-height: 320px; }
+.conv-note {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+/* DOUBLE-EDGED (flywheel + risks) */
+.de-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 48px;
+  flex: 1;
+  margin-top: 12px;
+  align-items: center;
+}
+.de-svg { width: 100%; max-width: 560px; margin: 0 auto; }
+.de-side { display: flex; flex-direction: column; gap: 16px; }
+.de-card {
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  border-left: 3px solid var(--vermillion);
+  padding: 16px 20px;
+}
+.de-card .h {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.de-card .b {
+  font-family: var(--serif);
+  font-size: 15.5px;
+  line-height: 1.45;
+  color: var(--ink-2);
+  font-variation-settings: "SOFT" 60, "opsz" 18;
+}
+.de-card .b em { font-style: italic; color: var(--vermillion); }
+
+/* CHART-EMBED SLIDES — show the student's own chart with insight callouts */
+.chart-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 48px;
+  flex: 1;
+  margin-top: 12px;
+  align-items: center;
+  min-width: 0;
+}
+.chart-box {
+  background: #ffffff;
+  border: 1px solid var(--hairline);
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+  position: relative;
+}
+.chart-box::before {
+  content: 'Primary survey · n=21';
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.chart-box img {
+  width: 100%;
+  height: auto;
+  max-height: 380px;
+  object-fit: contain;
+}
+.chart-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.chart-stat {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(64px, 8vw, 96px);
+  line-height: 0.86;
+  letter-spacing: -0.03em;
+  color: var(--vermillion);
+  font-style: italic;
+  font-variation-settings: "SOFT" 30, "opsz" 144;
+}
+.chart-stat sup { font-size: 0.4em; font-style: normal; color: var(--ink); font-weight: 500; margin-left: 4px; vertical-align: top; }
+.chart-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 8px;
+  margin-bottom: 6px;
+}
+.chart-takeaway {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  font-variation-settings: "SOFT" 60, "opsz" 18;
+}
+.chart-takeaway em { font-style: italic; color: var(--vermillion); }
+
+/* IG SCREENSHOT EMBED — for case-study slides */
+.ig-evidence {
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ig-evidence::before {
+  content: 'PRIMARY EVIDENCE';
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  color: var(--vermillion);
+  font-weight: 700;
+}
+.ig-evidence img {
+  width: 100%;
+  height: auto;
+  max-height: 260px;
+  object-fit: contain;
+  background: white;
+}
+.ig-evidence .cap {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+/* CASE STUDY — extended tactic-wheel layout */
+.cs-tactic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 6px;
+}
+.cs-tactic {
+  background: var(--paper);
+  border: 1px solid var(--hairline-2);
+  padding: 10px 12px;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+.cs-tactic .n {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--vermillion);
+  font-weight: 700;
+  min-width: 18px;
+}
+.cs-tactic .t {
+  font-family: var(--sans);
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+
+/* MARKET CHART slide (Influencer Marketing market size) */
+.market-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 48px;
+  flex: 1;
+  margin-top: 12px;
+  align-items: center;
+}
+
+/* References — grouped categories */
+.ref-grid { grid-template-columns: repeat(2, 1fr); }
+.ref-item { border-left: 3px solid var(--muted); padding-left: 10px; }
+.ref-item[data-type="academic"] { border-left-color: var(--teal); }
+.ref-item[data-type="industry"] { border-left-color: var(--saffron); }
+.ref-item[data-type="trade"] { border-left-color: var(--moss); }
+.ref-item[data-type="primary"] { border-left-color: var(--vermillion); background: var(--paper-2); }
+.ref-item .tag {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  font-weight: 700;
+  margin-left: 8px;
+  text-transform: uppercase;
+}
+.ref-item[data-type="academic"] .tag { color: var(--teal); }
+.ref-item[data-type="industry"] .tag { color: var(--saffron); }
+.ref-item[data-type="trade"] .tag { color: var(--moss); }
+.ref-item[data-type="primary"] .tag { color: var(--vermillion); }
+
+/* Print / PDF rules */
+@page {
+  size: 1440px 810px;
+  margin: 0;
+}
+@media print {
+  html, body { width: 1440px; height: auto; overflow: visible; background: var(--paper); }
+  body::before { display: none; }
+  .topbar { display: none; }
+  .main {
+    margin-top: 0;
+    width: 1440px;
+    height: auto;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+  .main::-webkit-scrollbar { display: none; }
+  .section {
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    width: 1440px;
+    height: 810px;
+    min-height: 810px;
+    max-height: 810px;
+    padding: 44px 64px 56px;
+    overflow: hidden;
+  }
+  .section:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+  .next-btn { display: none; }
+  .begin-btn { display: none; }
+  .hero-cta { display: none; }
+  /* Bring colors through */
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="tb-brand">Project <span class="v">·</span> Inderpreet Singh</div>
+  <div class="tb-meta">MBA 2024 — 2026</div>
+  <div class="tb-spacer"></div>
+  <div class="section-nav" id="sectionNav">
+    <button class="sn-trigger" id="snTrigger" aria-haspopup="true" aria-expanded="false">
+      <span class="sn-counter"><span id="page-indicator">01</span><span class="sn-sep">/</span><span class="total-count">20</span></span>
+      <span class="sn-divider"></span>
+      <span class="sn-label" id="snLabel">Hello</span>
+      <span class="sn-chev">▾</span>
+    </button>
+    <div class="sn-menu" id="snMenu">
+      <button class="dm-item active"><span class="dm-num">00</span><span class="dm-name">Hello</span></button>
+      <button class="dm-item"><span class="dm-num">01</span><span class="dm-name">The shift</span></button>
+      <button class="dm-item"><span class="dm-num">02</span><span class="dm-name">Then vs now</span></button>
+      <button class="dm-item"><span class="dm-num">03</span><span class="dm-name">Objectives</span></button>
+      <button class="dm-item"><span class="dm-num">04</span><span class="dm-name">Method</span></button>
+      <button class="dm-item"><span class="dm-num">05</span><span class="dm-name">Who responded</span></button>
+      <button class="dm-item"><span class="dm-num">06</span><span class="dm-name">Hours on social</span></button>
+      <button class="dm-item"><span class="dm-num">07</span><span class="dm-name">Where people are</span></button>
+      <button class="dm-item"><span class="dm-num">08</span><span class="dm-name">Ad exposure</span></button>
+      <button class="dm-item"><span class="dm-num">09</span><span class="dm-name">Conversion</span></button>
+      <button class="dm-item"><span class="dm-num">10</span><span class="dm-name">Content that influences</span></button>
+      <button class="dm-item"><span class="dm-num">11</span><span class="dm-name">What drives a buy</span></button>
+      <button class="dm-item"><span class="dm-num">12</span><span class="dm-name">Reviews check</span></button>
+      <button class="dm-item"><span class="dm-num">13</span><span class="dm-name">The regret factor</span></button>
+      <button class="dm-item"><span class="dm-num">14</span><span class="dm-name">Trust in influencers</span></button>
+      <button class="dm-item"><span class="dm-num">15</span><span class="dm-name">How important?</span></button>
+      <button class="dm-item"><span class="dm-num">16</span><span class="dm-name">Trust hierarchy</span></button>
+      <button class="dm-item"><span class="dm-num">17</span><span class="dm-name">Market context</span></button>
+      <button class="dm-item"><span class="dm-num">18</span><span class="dm-name">Starbucks</span></button>
+      <button class="dm-item"><span class="dm-num">19</span><span class="dm-name">Nike</span></button>
+      <button class="dm-item"><span class="dm-num">20</span><span class="dm-name">Daniel Wellington</span></button>
+      <button class="dm-item"><span class="dm-num">21</span><span class="dm-name">Blue Tokai</span></button>
+      <button class="dm-item"><span class="dm-num">22</span><span class="dm-name">The new funnel</span></button>
+      <button class="dm-item"><span class="dm-num">23</span><span class="dm-name">A conversation</span></button>
+      <button class="dm-item"><span class="dm-num">24</span><span class="dm-name">Double-edged</span></button>
+      <button class="dm-item"><span class="dm-num">25</span><span class="dm-name">Findings</span></button>
+      <button class="dm-item"><span class="dm-num">26</span><span class="dm-name">Recommendations</span></button>
+      <button class="dm-item"><span class="dm-num">27</span><span class="dm-name">Limitations</span></button>
+      <button class="dm-item"><span class="dm-num">28</span><span class="dm-name">Conclusion</span></button>
+      <button class="dm-item"><span class="dm-num">29</span><span class="dm-name">References</span></button>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <!-- 00 HERO -->
+  <section class="section s-hero" id="s0">
+    <div class="hero-frame">
+      <div class="hero-eyebrow">Project Report · 2026</div>
+      <h1 class="hero-title">Why we<br><em>buy now.</em></h1>
+      <p class="hero-lede">
+        How social media rewired the way consumers decide what to spend on — a study with case work on Starbucks, Nike, Daniel Wellington & Blue Tokai.
+      </p>
+      <div class="hero-author">
+        <span><strong>Inderpreet Singh</strong> · Author</span>
+        <span class="dot"></span>
+        <span>Guide: <strong>Jaya Rathore</strong></span>
+        <span class="dot"></span>
+        <span>O24MBA111968</span>
+      </div>
+      <div class="hero-cta">
+        <button class="begin-btn" data-next="1">Begin <span class="arrow">↓</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 THE SHIFT -->
+  <section class="section" id="s1">
+    <div class="sec-eyebrow"><span class="num">01</span><span class="dot"></span><span>The shift</span><span class="rule"></span></div>
+    <h2 class="sec-title">The decision moved <em>online.</em></h2>
+    <p class="sec-lede">
+      Four eras of marketing in fifty years. Each one moved the moment of decision closer to the buyer &mdash; and further from the brand&rsquo;s own voice.
+    </p>
+    <div class="shift-timeline">
+      <div class="st-track">
+        <div class="st-era">
+          <div class="yr">1970s &ndash; 1990s</div>
+          <div class="name">Broadcast</div>
+          <div class="chan">TV &middot; Print<br>Radio &middot; Outdoor</div>
+          <div class="st-icon"><svg viewBox="0 0 100 100"><rect x="14" y="32" width="72" height="46" rx="3"/><rect x="22" y="40" width="56" height="30"/><line x1="40" y1="82" x2="60" y2="82"/><line x1="42" y1="28" x2="32" y2="14"/><line x1="58" y1="28" x2="68" y2="14"/></svg></div>
+          <div class="who"><em>Brand &rarr; audience.</em> One-way. The buyer listened, then walked to a shelf to decide.</div>
+        </div>
+        <div class="st-era">
+          <div class="yr">2000s &ndash; 2010s</div>
+          <div class="name">Search</div>
+          <div class="chan">Google &middot; Amazon<br>Email &middot; Reviews</div>
+          <div class="st-icon"><svg viewBox="0 0 100 100"><circle cx="42" cy="42" r="24"/><line x1="60" y1="60" x2="84" y2="84"/></svg></div>
+          <div class="who"><em>Audience finds brand.</em> Buyers go looking. The first online reviews start mattering.</div>
+        </div>
+        <div class="st-era">
+          <div class="yr">2010s &ndash; 2020s</div>
+          <div class="name">Mobile</div>
+          <div class="chan">Apps &middot; Notifications<br>Always-on access</div>
+          <div class="st-icon"><svg viewBox="0 0 100 100"><rect x="32" y="14" width="36" height="72" rx="6"/><line x1="44" y1="78" x2="56" y2="78"/><circle cx="68" cy="22" r="5" fill="currentColor" stroke="none"/></svg></div>
+          <div class="who"><em>Always within reach.</em> Convenience wins. Discovery becomes constant background noise.</div>
+        </div>
+        <div class="st-era now">
+          <div class="yr">2020s +</div>
+          <div class="name">Social</div>
+          <div class="chan">Reels &middot; Reviews<br>Influencers &middot; UGC</div>
+          <div class="st-icon"><svg viewBox="0 0 100 100"><circle cx="50" cy="18" r="7"/><circle cx="18" cy="58" r="7"/><circle cx="82" cy="58" r="7"/><circle cx="50" cy="86" r="7"/><line x1="50" y1="25" x2="22" y2="54"/><line x1="50" y1="25" x2="78" y2="54"/><line x1="25" y1="60" x2="75" y2="60"/><line x1="23" y1="63" x2="46" y2="82"/><line x1="77" y1="63" x2="54" y2="82"/></svg></div>
+          <div class="who"><em>Audience IS the brand.</em> Buyers research peers before they research products. Trust got redistributed from advertising to people.</div>
+        </div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Then vs now <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 02 THEN VS NOW -->
+  <section class="section" id="s2">
+    <div class="sec-eyebrow"><span class="num">02</span><span class="dot"></span><span>Then vs now</span><span class="rule"></span></div>
+    <h2 class="sec-title">Two journeys, same buyer.</h2>
+    <p class="sec-lede">The same decision, made in completely different worlds.</p>
+    <div class="tn-layout">
+      <div class="tn-col">
+        <div class="tn-tag">Then — Pre-2010</div>
+        <div class="tn-flow">
+          <div class="tn-step">See a TV / print ad</div>
+          <div class="tn-arrow">↓</div>
+          <div class="tn-step">Ask a friend or family</div>
+          <div class="tn-arrow">↓</div>
+          <div class="tn-step">Walk into a store</div>
+          <div class="tn-arrow">↓</div>
+          <div class="tn-step">Decide at the shelf</div>
+          <div class="tn-arrow">↓</div>
+          <div class="tn-step">Buy</div>
+        </div>
+      </div>
+      <div class="tn-col now">
+        <div class="tn-tag">Now — Social-led</div>
+        <div class="tn-flow">
+          <div class="tn-step">Scroll a feed, see a reel</div>
+          <div class="tn-arrow">↓</div>
+          <div class="tn-step">Check reviews & ratings</div>
+          <div class="tn-arrow">↓</div>
+          <div class="tn-step">Watch an influencer use it</div>
+          <div class="tn-arrow">↓</div>
+          <div class="tn-step">Decide before the shop</div>
+          <div class="tn-arrow">↓</div>
+          <div class="tn-step">Buy &mdash; then post about it</div>
+        </div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Objectives <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 03 OBJECTIVES -->
+  <section class="section" id="s3">
+    <div class="sec-eyebrow"><span class="num">03</span><span class="dot"></span><span>Objectives</span><span class="rule"></span></div>
+    <h2 class="sec-title">Six questions worth answering.</h2>
+    <p class="sec-lede">The study is built around six tight objectives — each one a specific thing to measure.</p>
+    <div class="obj-grid">
+      <div class="obj-card">
+        <div class="obj-num">01</div>
+        <svg class="ic" viewBox="0 0 24 24"><line x1="3" y1="20" x2="21" y2="20"/><rect x="5" y="12" width="3" height="8"/><rect x="11" y="7" width="3" height="13"/><rect x="17" y="3" width="3" height="17"/></svg>
+        <div class="obj-text">Measure social media&rsquo;s actual impact on what people buy.</div>
+      </div>
+      <div class="obj-card">
+        <div class="obj-num">02</div>
+        <svg class="ic" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="17" x2="20" y2="17"/><circle cx="9" cy="7" r="2.5" fill="currentColor" stroke="none"/><circle cx="15" cy="17" r="2.5" fill="currentColor" stroke="none"/></svg>
+        <div class="obj-text">Identify the levers &mdash; influencers, ads, reviews &mdash; that move buyers.</div>
+      </div>
+      <div class="obj-card">
+        <div class="obj-num">03</div>
+        <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>
+        <div class="obj-text">Compare platforms &mdash; which ones shape preference, and how.</div>
+      </div>
+      <div class="obj-card">
+        <div class="obj-num">04</div>
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="12" r="3"/><line x1="9" y1="12" x2="15" y2="12"/></svg>
+        <div class="obj-text">Test the link between engagement on social and purchase intent.</div>
+      </div>
+      <div class="obj-card">
+        <div class="obj-num">05</div>
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><path d="M2 21c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M14 18c0-1.8 1.4-3.2 3.2-3.2s3.8 1.4 3.8 3.2"/></svg>
+        <div class="obj-text">Profile age effects &mdash; especially Gen Z and young professionals.</div>
+      </div>
+      <div class="obj-card">
+        <div class="obj-num">06</div>
+        <svg class="ic" viewBox="0 0 24 24"><line x1="4" y1="12" x2="18" y2="12"/><polyline points="13,6 19,12 13,18"/></svg>
+        <div class="obj-text">Translate findings into things brands can actually do.</div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Method <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 05 METHODOLOGY -->
+  <section class="section" id="s4">
+    <div class="sec-eyebrow"><span class="num">04</span><span class="dot"></span><span>Method</span><span class="rule"></span></div>
+    <h2 class="sec-title">Mixed method, kept simple.</h2>
+    <p class="sec-lede">A structured questionnaire on Google Forms gathered the primary signal. Secondary sources framed it.</p>
+    <div class="meth-layout">
+      <div class="meth-diagram">
+        <div class="md-source primary">
+          <div class="ttl">Primary</div>
+          <div class="what">Google Forms survey</div>
+          <div class="how">21 respondents · students & young professionals · convenience sample</div>
+        </div>
+        <div class="md-source secondary">
+          <div class="ttl">Secondary</div>
+          <div class="what">Journals, reports, case work</div>
+          <div class="how">Statista, McKinsey, Pew, HBR, Sprout Social, etc.</div>
+        </div>
+        <div class="md-line l1"></div>
+        <div class="md-line l2"></div>
+        <div class="md-line l3"></div>
+        <div class="md-line l4"></div>
+        <div class="md-merge">% analysis &middot; graphs &middot; case framing</div>
+        <div class="md-out">Descriptive &amp; analytical design</div>
+      </div>
+      <div class="meth-side">
+        <div>
+          <h4>Design</h4>
+          <p>Descriptive — describe what is happening — combined with light analytical work to find which levers matter most.</p>
+        </div>
+        <div>
+          <h4>Tools</h4>
+          <p>Percentage analysis, frequency tables, and basic visual charts. Kept lightweight on purpose; the survey size doesn't justify regression.</p>
+        </div>
+        <div>
+          <h4>Observation</h4>
+          <p>Alongside the survey, consumer behaviour was observed directly on platform &mdash; how people engaged with ads, influencer content, and promos in the wild.</p>
+        </div>
+        <div>
+          <h4>Scope</h4>
+          <p>Instagram, YouTube, Facebook, Snapchat &mdash; the platforms the sample actually uses every day.</p>
+        </div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Where people are <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 06 WHO RESPONDED -->
+  <section class="section" id="s_who">
+    <div class="sec-eyebrow"><span class="num">05</span><span class="dot"></span><span>Who responded</span><span class="rule"></span></div>
+    <h2 class="sec-title">Not just students.</h2>
+    <p class="sec-lede">A mix worth noting &mdash; most of the sample earns its own money, full-time or running its own thing.</p>
+    <div class="chart-layout">
+      <div class="chart-box"><img src="_docx_images/image17.png" alt="Occupation breakdown pie chart"></div>
+      <div class="chart-side">
+        <div class="chart-stat">71<sup>%</sup></div>
+        <div class="chart-label">Earn their own income</div>
+        <div class="chart-takeaway">Employed <em>33.3%</em>, students <em>28.6%</em>, self-employed <em>19%</em>, other <em>19%</em>. The sample isn't all students &mdash; a clear majority have buying power.</div>
+        <div class="chart-takeaway"><em>So what.</em> The percentages downstream aren't "what young people think" &mdash; they're what a working / earning sample reports about their actual purchases.</div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Hours on social <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 07 HOURS ON SOCIAL -->
+  <section class="section" id="s_hours">
+    <div class="sec-eyebrow"><span class="num">06</span><span class="dot"></span><span>Hours on social</span><span class="rule"></span></div>
+    <h2 class="sec-title">1&ndash;3 hours, every day.</h2>
+    <p class="sec-lede">A meaningful slice of the day &mdash; long enough to absorb several feeds, short enough that brands have to earn the attention.</p>
+    <div class="chart-layout">
+      <div class="chart-box"><img src="_docx_images/image19.png" alt="Hours on social media pie chart"></div>
+      <div class="chart-side">
+        <div class="chart-stat">57.1<sup>%</sup></div>
+        <div class="chart-label">Spend 1&ndash;3 hours a day</div>
+        <div class="chart-takeaway">Plus <em>28.6%</em> at 3&ndash;5 hours and <em>9.5%</em> over 5 hours. Roughly <em>95%</em> of the sample spends at least an hour a day inside a social feed.</div>
+        <div class="chart-takeaway"><em>So what.</em> Reach isn't the question. The question is what shows up during that 1&ndash;3 hour window &mdash; and how often the same brand does.</div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Where people are <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 08 PLATFORMS -->
+  <section class="section" id="s5">
+    <div class="sec-eyebrow"><span class="num">07</span><span class="dot"></span><span>Where people are</span><span class="rule"></span></div>
+    <h2 class="sec-title">Two platforms run the show.</h2>
+    <p class="sec-lede">Instagram + YouTube reach almost the whole sample. Snapchat reaches most. Facebook reaches a few. Twitter is functionally absent &mdash; a single respondent.</p>
+    <div class="bars" style="margin-top: 24px; max-width: 880px;">
+      <div class="bar-row"><div class="bar-name">Instagram</div><div class="bar-track"><div class="bar-fill" style="width: 85.7%"></div></div><div class="bar-val">85.7%</div></div>
+      <div class="bar-row"><div class="bar-name">YouTube</div><div class="bar-track"><div class="bar-fill" style="width: 81%"></div></div><div class="bar-val">81.0%</div></div>
+      <div class="bar-row"><div class="bar-name">Snapchat</div><div class="bar-track"><div class="bar-fill dim" style="width: 61.9%"></div></div><div class="bar-val">61.9%</div></div>
+      <div class="bar-row"><div class="bar-name">Facebook</div><div class="bar-track"><div class="bar-fill dim" style="width: 14.3%"></div></div><div class="bar-val">14.3%</div></div>
+      <div class="bar-row"><div class="bar-name">Twitter / X</div><div class="bar-track"><div class="bar-fill dim" style="width: 4.8%"></div></div><div class="bar-val">4.8%</div></div>
+    </div>
+    <p class="stat-explain" style="margin-top: 32px; max-width: 900px;">
+      <em>So what.</em> If a brand can only show up well in one place, that place is Instagram. If it can fund a second, that's YouTube. Anything left after that is bonus reach.
+    </p>
+    <button class="next-btn">Next: Ad exposure <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 09 AD EXPOSURE -->
+  <section class="section" id="s6">
+    <div class="sec-eyebrow"><span class="num">08</span><span class="dot"></span><span>Ad exposure</span><span class="rule"></span></div>
+    <h2 class="sec-title">Ads are <em>unavoidable.</em></h2>
+    <div class="stat-layout">
+      <div>
+        <div class="stat-big">85<sup>%</sup></div>
+        <div class="stat-label">Respondents who see product ads often or always</div>
+        <p class="stat-explain">52.4% say <em>often</em>. 33.3% say <em>always</em>. Almost no one says rarely.</p>
+        <p class="stat-explain">The feed is a billboard now. The question isn't whether your audience sees ads — it's whether they see <em>yours</em>.</p>
+      </div>
+      <div class="cs-side" style="gap: 14px;">
+        <div class="cs-pillar">
+          <div class="h">For the brand</div>
+          <div class="b">Constant exposure raises the bar. Generic, polished ads disappear. Specific, weird, or useful ones get remembered.</div>
+        </div>
+        <div class="cs-pillar">
+          <div class="h">For the buyer</div>
+          <div class="b">Discovery has become passive. Most new products are found while scrolling, not while searching.</div>
+        </div>
+        <div class="cs-pillar">
+          <div class="h">The mechanic</div>
+          <div class="b">Targeting algorithms decide which ads each person sees. Two people open the same app and see different worlds.</div>
+        </div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Conversion <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 10 CONVERSION -->
+  <section class="section" id="s7">
+    <div class="sec-eyebrow"><span class="num">09</span><span class="dot"></span><span>Conversion</span><span class="rule"></span></div>
+    <h2 class="sec-title">Exposure becomes <em>spending.</em></h2>
+    <div class="stat-layout">
+      <div>
+        <div class="stat-big">76.2<sup>%</sup></div>
+        <div class="stat-label">Have bought a product after seeing it on social media</div>
+        <p class="stat-explain">Three in four respondents converted from a feed at least once. Social media doesn't just create awareness — it closes sales.</p>
+        <p class="stat-explain"><em>And</em> 38.1% say ads <em>often</em> influence their buying decisions. Another 47.6% say <em>sometimes</em>. Almost no one says never.</p>
+      </div>
+      <div class="cs-side">
+        <div class="cs-pillar">
+          <div class="h">Awareness vs. purchase</div>
+          <div class="b">The old model assumed a long gap between seeing an ad and buying. On social, those moments are increasingly the same moment — tap, click, checkout.</div>
+        </div>
+        <div class="cs-result">
+          <div class="r-tag">The implication</div>
+          <div class="r-text">Social media is now a <em>full-funnel</em> channel — top, middle, and bottom — not just a brand-awareness tool.</div>
+        </div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Content that influences <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 11 CONTENT THAT INFLUENCES -->
+  <section class="section" id="s_content">
+    <div class="sec-eyebrow"><span class="num">10</span><span class="dot"></span><span>Content that influences</span><span class="rule"></span></div>
+    <h2 class="sec-title">Reviews beat <em>everything else.</em></h2>
+    <p class="sec-lede">When the survey asked which content actually moves a purchase decision, the answer was lopsided.</p>
+    <div class="chart-layout">
+      <div class="chart-box"><img src="_docx_images/image23.png" alt="Type of content most influential pie chart"></div>
+      <div class="chart-side">
+        <div class="chart-stat">57.1<sup>%</sup></div>
+        <div class="chart-label">Product reviews are #1</div>
+        <div class="chart-takeaway">Influencer recommendations <em>19%</em>, brand pages <em>14.3%</em>, paid ads <em>9.5%</em>. Friends&rsquo; own posts: <em>0%</em>.</div>
+        <div class="chart-takeaway"><em>So what.</em> The peer-review economy is real. People weigh what other <em>customers</em> said more than what anyone paid &mdash; including their own friends, in this sample.</div>
+      </div>
+    </div>
+    <button class="next-btn">Next: What drives a buy <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 12 DRIVERS -->
+  <section class="section" id="s8">
+    <div class="sec-eyebrow"><span class="num">11</span><span class="dot"></span><span>What drives a buy</span><span class="rule"></span></div>
+    <h2 class="sec-title">Trust beats <em>everything else.</em></h2>
+    <p class="sec-lede">Asked what most encourages an online purchase, respondents ranked the five levers like this:</p>
+    <div class="drivers" style="grid-template-columns: repeat(5, 1fr);">
+      <div class="driver lead">
+        <div class="driver-pct">47.6<sup style="font-size:0.4em">%</sup></div>
+        <div class="driver-name">Reviews &amp; ratings</div>
+        <div class="driver-note">Peer voices outweigh the brand&rsquo;s own voice. People want to see other people who paid.</div>
+      </div>
+      <div class="driver">
+        <div class="driver-pct">28.6<sup style="font-size:0.4em">%</sup></div>
+        <div class="driver-name">Discounts &amp; offers</div>
+        <div class="driver-note">Urgency works. Limited-time deals collapse the consideration gap.</div>
+      </div>
+      <div class="driver">
+        <div class="driver-pct">9.5<sup style="font-size:0.4em">%</sup></div>
+        <div class="driver-name">Brand reputation</div>
+        <div class="driver-note">Helps you make the shortlist. Rarely closes the sale by itself anymore.</div>
+      </div>
+      <div class="driver">
+        <div class="driver-pct">9.5<sup style="font-size:0.4em">%</sup></div>
+        <div class="driver-name">Visual appeal</div>
+        <div class="driver-note">Beautiful product shots earn the click. Reviews earn the purchase.</div>
+      </div>
+      <div class="driver">
+        <div class="driver-pct">4.8<sup style="font-size:0.4em">%</sup></div>
+        <div class="driver-name">Influencer promotion</div>
+        <div class="driver-note">Surprisingly low &mdash; influencers create awareness, but reviews close the sale.</div>
+      </div>
+    </div>
+    <div class="chart-layout" style="margin-top: 24px;">
+      <div class="chart-box" style="min-height: 220px; max-height: 240px;"><img src="_docx_images/image24.png" alt="Drivers of online purchase pie chart" style="max-height: 200px;"></div>
+      <div class="chart-side">
+        <div class="chart-label">The student&rsquo;s own chart &middot; n=21</div>
+        <div class="chart-takeaway"><em>The order matters.</em> Reviews are the gate. A brand can spend everything on visuals and influencers, but if the reviews are thin or bad, the sale stalls.</div>
+        <div class="chart-takeaway">Reviews + discounts together = <em>76.2%</em> of decisions. The rest is rounding.</div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Reviews check <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 13 REVIEWS CHECK -->
+  <section class="section" id="s_revcheck">
+    <div class="sec-eyebrow"><span class="num">12</span><span class="dot"></span><span>Reviews check</span><span class="rule"></span></div>
+    <h2 class="sec-title">71.4% <em>always</em> check reviews before buying.</h2>
+    <p class="sec-lede">Reading reviews isn't a fallback &mdash; it's the default step in the buying process.</p>
+    <div class="chart-layout">
+      <div class="chart-box"><img src="_docx_images/image26.png" alt="Reviews check pie chart"></div>
+      <div class="chart-side">
+        <div class="chart-stat">71.4<sup>%</sup></div>
+        <div class="chart-label">Always check reviews</div>
+        <div class="chart-takeaway">Plus <em>9.5%</em> often. Only <em>14.3%</em> rarely look &mdash; almost no one buys without a peek.</div>
+        <div class="chart-takeaway"><em>So what.</em> If a brand&rsquo;s reviews are thin, missing, or visibly poor, the sale isn&rsquo;t lost at checkout &mdash; it&rsquo;s lost before the buyer even reaches the page.</div>
+      </div>
+    </div>
+    <button class="next-btn">Next: The regret factor <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 14 THE REGRET FACTOR -->
+  <section class="section" id="s_regret">
+    <div class="sec-eyebrow"><span class="num">13</span><span class="dot"></span><span>The regret factor</span><span class="rule"></span></div>
+    <h2 class="sec-title">71.4% have <em>regretted</em> a social-media-driven buy.</h2>
+    <p class="sec-lede">For all the influence, most buyers also walk away from a purchase feeling burned at some point.</p>
+    <div class="chart-layout">
+      <div class="chart-box"><img src="_docx_images/image27.png" alt="Regret a social media influenced purchase pie chart"></div>
+      <div class="chart-side">
+        <div class="chart-stat">71.4<sup>%</sup></div>
+        <div class="chart-label">Have regretted at least one</div>
+        <div class="chart-takeaway">Only <em>28.6%</em> say they&rsquo;ve never regretted a purchase influenced by social media.</div>
+        <div class="chart-takeaway"><em>So what.</em> Conversion is real &mdash; but it&rsquo;s not always satisfying. This is the side of the funnel marketers don&rsquo;t usually report. It also explains why <em>reviews</em> matter so much: buyers know the risk.</div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Trust in influencers <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 15 TRUST IN INFLUENCERS -->
+  <section class="section" id="s_influtrust">
+    <div class="sec-eyebrow"><span class="num">14</span><span class="dot"></span><span>Trust in influencers</span><span class="rule"></span></div>
+    <h2 class="sec-title">Nobody gives them <em>5 out of 5.</em></h2>
+    <p class="sec-lede">Asked to rate trust in influencer-promoted products on a 5-point scale, not one respondent picked the top of the scale.</p>
+    <div class="chart-layout">
+      <div class="chart-box"><img src="_docx_images/image25.png" alt="Trust in influencer-promoted products bar chart"></div>
+      <div class="chart-side">
+        <div class="chart-stat">0<sup>%</sup></div>
+        <div class="chart-label">Rated influencer trust 5/5</div>
+        <div class="chart-takeaway">Distribution: <em>23.8%</em> at 1, <em>23.8%</em> at 2, <em>42.9%</em> at 3 (neutral), <em>9.5%</em> at 4, <em>0%</em> at 5.</div>
+        <div class="chart-takeaway"><em>So what.</em> Influencers create awareness &mdash; not full trust. Reviews do that part. The Nike / DW cases that follow show why the trick is to <em>borrow</em> attention from an influencer, then <em>earn</em> trust with social proof.</div>
+      </div>
+    </div>
+    <button class="next-btn">Next: How important? <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 16 HOW IMPORTANT IS SOCIAL MEDIA -->
+  <section class="section" id="s_importance">
+    <div class="sec-eyebrow"><span class="num">15</span><span class="dot"></span><span>How important?</span><span class="rule"></span></div>
+    <h2 class="sec-title">It matters &mdash; but not <em>unconditionally.</em></h2>
+    <p class="sec-lede">Asked how important social media is to their purchasing decisions on a 5-point scale, the sample landed solidly above neutral.</p>
+    <div class="chart-layout">
+      <div class="chart-box"><img src="_docx_images/image28.png" alt="Importance of social media in purchasing bar chart"></div>
+      <div class="chart-side">
+        <div class="chart-stat">62<sup>%</sup></div>
+        <div class="chart-label">Rate it 4 or 5 out of 5</div>
+        <div class="chart-takeaway">Specifically: <em>47.6%</em> at 4, <em>14.3%</em> at 5, <em>23.8%</em> at 3 (neutral), <em>14.3%</em> at 1.</div>
+        <div class="chart-takeaway"><em>So what.</em> Social media is a serious factor in modern purchasing &mdash; the majority say so. But a meaningful <em>1 in 7</em> still rate it minimal: this is influence, not gospel.</div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Trust hierarchy <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 17 TRUST HIERARCHY -->
+  <section class="section" id="s_trust">
+    <div class="sec-eyebrow"><span class="num">16</span><span class="dot"></span><span>Trust hierarchy</span><span class="rule"></span></div>
+    <h2 class="sec-title">Who do buyers <em>actually</em> trust?</h2>
+    <p class="sec-lede">The data ranks information sources by how much weight buyers give them. Smaller = trusted more.</p>
+    <div class="trust-layout">
+      <div class="trust-pyramid">
+        <div class="tp-row tp-1"><span class="tp-name">Peer reviews &amp; ratings</span><span class="tp-pct">47.6%</span></div>
+        <div class="tp-row tp-2"><span class="tp-name">Discounts &amp; offers</span><span class="tp-pct">28.6%</span></div>
+        <div class="tp-row tp-3"><span class="tp-name">Brand reputation</span><span class="tp-pct">9.5%</span></div>
+        <div class="tp-row tp-4"><span class="tp-name">Visual / influencer alone</span><span class="tp-pct">&lt; 14%</span></div>
+      </div>
+      <div class="trust-side">
+        <div>
+          <h4>The rule</h4>
+          <p>Trust flows <em>from people, toward brands</em> &mdash; never the other way. Buyers believe other buyers first, then prices, then logos.</p>
+        </div>
+        <div>
+          <h4>Why it matters</h4>
+          <p>A perfect ad to a stranger means nothing if three peers say the product is bad. The brand voice is the <em>last</em> voice in the chain, not the first.</p>
+        </div>
+        <div>
+          <h4>What it changes</h4>
+          <p>Most of a marketing budget is spent at the bottom of this pyramid. The leverage is at the top: making reviews easier, more visible, and more honest.</p>
+        </div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Market context <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 18 MARKET CONTEXT -->
+  <section class="section" id="s_market">
+    <div class="sec-eyebrow"><span class="num">17</span><span class="dot"></span><span>Market context</span><span class="rule"></span></div>
+    <h2 class="sec-title">A <em>$22-billion</em> industry.</h2>
+    <p class="sec-lede">What this study is measuring isn&rsquo;t a fringe tactic. Globally, influencer marketing more than doubled in five years.</p>
+    <div class="market-layout">
+      <div class="chart-box" style="background: #fff;"><img src="_docx_images/image31.png" alt="Influencer marketing market size 2020-2025 (Collabstr)"></div>
+      <div class="chart-side">
+        <div class="chart-stat">$22.2<sup>B</sup></div>
+        <div class="chart-label">Global influencer marketing &middot; 2025</div>
+        <div class="chart-takeaway">From <em>$9.7B in 2020</em> to <em>$22.2B in 2025</em> &mdash; the channel grew faster than most digital advertising categories in the same window.</div>
+        <div class="chart-takeaway"><em>So what.</em> When 21 respondents say social media drives their purchases, they&rsquo;re describing the lived end of a market that brands now spend $22 billion a year competing inside.</div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Starbucks <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 19 STARBUCKS -->
+  <section class="section" id="s9">
+    <div class="sec-eyebrow"><span class="num">18</span><span class="dot"></span><span>Case 01</span><span class="rule"></span></div>
+    <h2 class="sec-title">Starbucks.</h2>
+    <p class="sec-lede">The playbook for turning a coffee chain into a <em>lifestyle</em> brand on social &mdash; built on six recurring tactics.</p>
+    <div class="cs-layout">
+      <div class="cs-block">
+        <div class="cs-tag">Coffee &middot; Founded 1971 &middot; Seattle, WA</div>
+        <div class="cs-brand">Sell the <em>feeling</em>, not the cup.</div>
+        <p class="cs-body">
+          Starbucks doesn&rsquo;t lead with the product on social. It leads with the moment &mdash; the cup with your name on it, the seasonal red cup, the customer&rsquo;s own post. The brand quietly hosts a stage that customers perform on, and the content writes itself.
+        </p>
+        <div class="cs-result">
+          <div class="r-tag">Why it works</div>
+          <div class="r-text">Customers do the posting. Starbucks just gives them <em>something postable</em>.</div>
+        </div>
+      </div>
+      <div class="cs-side">
+        <div class="cs-pillar"><div class="h">Six recurring tactics</div><div class="b" style="font-size:11px;color:var(--muted);letter-spacing:0.02em;">As documented in the report&rsquo;s Starbucks profile</div></div>
+        <div class="cs-tactic-grid">
+          <div class="cs-tactic"><div class="n">01</div><div class="t">Influencer &amp; celebrity collaborations</div></div>
+          <div class="cs-tactic"><div class="n">02</div><div class="t">Interactive customer engagement campaigns</div></div>
+          <div class="cs-tactic"><div class="n">03</div><div class="t">User-generated content reposts</div></div>
+          <div class="cs-tactic"><div class="n">04</div><div class="t">Seasonal product promotions (Red Cup Campaign)</div></div>
+          <div class="cs-tactic"><div class="n">05</div><div class="t">Personalised digital marketing (name on cup)</div></div>
+          <div class="cs-tactic"><div class="n">06</div><div class="t">Visually appealing content &amp; storytelling</div></div>
+        </div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Nike <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 20 NIKE -->
+  <section class="section" id="s10">
+    <div class="sec-eyebrow"><span class="num">19</span><span class="dot"></span><span>Case 02</span><span class="rule"></span></div>
+    <h2 class="sec-title">Nike.</h2>
+    <p class="sec-lede">A masterclass in using influencers to <em>borrow</em> trust at scale &mdash; verified by a 150-respondent academic study cited in the report.</p>
+    <div class="cs-layout">
+      <div class="cs-block">
+        <div class="cs-tag">Sportswear &middot; Global</div>
+        <div class="cs-brand">Sell through <em>people</em>, not pages.</div>
+        <p class="cs-body">
+          Nike works with athletes and lifestyle influencers who already have credibility in a niche. The product appears inside a real life the audience already follows. The endorsement doesn&rsquo;t feel like an ad &mdash; it feels like a peer&rsquo;s choice.
+        </p>
+        <p class="cs-body">
+          A 150-respondent academic study referenced in the report found participants exposed to Nike&rsquo;s influencer content reported significantly higher purchase intent than those who weren&rsquo;t. Brand familiarity, trust, image, loyalty and quality all moved together.
+        </p>
+        <div class="cs-result">
+          <div class="r-tag">The takeaway</div>
+          <div class="r-text">Buy <em>access</em> to a community by partnering with the person it already trusts.</div>
+        </div>
+      </div>
+      <div class="cs-side">
+        <div class="ig-evidence">
+          <img src="_docx_images/image11.png" alt="Nike influencer post by @betinapasso featuring Nike dumbbells">
+          <div class="cap">@betinapasso &middot; collab with @nikestrength &middot; from the report&rsquo;s primary evidence</div>
+        </div>
+        <div class="cs-pillar"><div class="h">Four content themes (per the cited study)</div></div>
+        <div class="cs-tactic-grid">
+          <div class="cs-tactic"><div class="n">01</div><div class="t">Product features &amp; specs</div></div>
+          <div class="cs-tactic"><div class="n">02</div><div class="t">Lifestyle imagery</div></div>
+          <div class="cs-tactic"><div class="n">03</div><div class="t">User testimonials</div></div>
+          <div class="cs-tactic"><div class="n">04</div><div class="t">Promotional offers</div></div>
+        </div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Daniel Wellington <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 21 DANIEL WELLINGTON -->
+  <section class="section" id="s11">
+    <div class="sec-eyebrow"><span class="num">20</span><span class="dot"></span><span>Case 03</span><span class="rule"></span></div>
+    <h2 class="sec-title">Daniel Wellington.</h2>
+    <p class="sec-lede">A small watch brand outgrew its budget by going <em>wide</em>, not big &mdash; with two real posts captured in the report.</p>
+    <div class="cs-layout">
+      <div class="cs-block">
+        <div class="cs-tag">Watches &middot; #DanielWellington</div>
+        <div class="cs-brand">Many small voices <em>&gt;</em> one huge one.</div>
+        <p class="cs-body">
+          DW <strong>gifted</strong> watches &mdash; didn&rsquo;t pay &mdash; to thousands of micro-influencers (1k&ndash;100k followers) instead of paying one megastar. Each creator styled their own photo and posted under <span style="font-family:var(--mono);color:var(--vermillion);font-weight:600;">#DanielWellington</span>, often with a personal discount code.
+        </p>
+        <p class="cs-body">
+          The mechanic: zero paid spend up front, hundreds of niche audiences, a personal code to track ROI. Aggregate reach exploded &mdash; the brand grew into a <strong>$200M+</strong> business with millions of Instagram followers.
+        </p>
+        <div class="cs-result">
+          <div class="r-tag">Why it worked</div>
+          <div class="r-text">Many small recommendations from <em>trusted</em> voices outperform one giant ad from a stranger &mdash; especially when each carries a trackable code.</div>
+        </div>
+      </div>
+      <div class="cs-side">
+        <div class="ig-evidence">
+          <img src="_docx_images/image14.jpeg" alt="Daniel Wellington influencer post by @dhiptadi">
+          <div class="cap">@dhiptadi &middot; #danielwellington &middot; discount code &lsquo;dhipt&rsquo; for 15% off &middot; 2,046 likes</div>
+        </div>
+        <div class="ig-evidence">
+          <img src="_docx_images/image12.png" alt="Daniel Wellington influencer post by @kimmyschram">
+          <div class="cap">@kimmyschram &middot; #danielwellington &middot; discount code &lsquo;KIMMY&rsquo; for 15% off &middot; 4,206 likes</div>
+        </div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Blue Tokai <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 22 BLUE TOKAI -->
+  <section class="section" id="s12">
+    <div class="sec-eyebrow"><span class="num">21</span><span class="dot"></span><span>Case 04</span><span class="rule"></span></div>
+    <h2 class="sec-title">Blue Tokai.</h2>
+    <p class="sec-lede">The Indian specialty coffee brand that competed with global giants &mdash; six tactics, four observed behaviours, and a real fight on its hands.</p>
+    <div class="cs-layout">
+      <div class="cs-block">
+        <div class="cs-tag">Coffee &middot; Founded 2013 &middot; Matt Chitharanjan &amp; Namrata Asthana</div>
+        <div class="cs-brand">Premium without a <em>premium</em> ad budget.</div>
+        <p class="cs-body">
+          Blue Tokai built its audience around the craft &mdash; high-quality roast videos, brewing tutorials, café interiors, customer posts. Instagram became the brand&rsquo;s storefront: young Indian buyers learned what specialty coffee even was from the feed, then went to the café to taste it.
+        </p>
+        <div class="cs-pillar"><div class="h">The six tactics (per report)</div></div>
+        <div class="cs-tactic-grid">
+          <div class="cs-tactic"><div class="n">01</div><div class="t">High-quality product photographs &amp; videos</div></div>
+          <div class="cs-tactic"><div class="n">02</div><div class="t">Coffee-brewing tutorials &amp; educational content</div></div>
+          <div class="cs-tactic"><div class="n">03</div><div class="t">Food-blogger &amp; influencer collaborations</div></div>
+          <div class="cs-tactic"><div class="n">04</div><div class="t">Café-culture &amp; lifestyle experiences</div></div>
+          <div class="cs-tactic"><div class="n">05</div><div class="t">Engagement via comments, polls, stories</div></div>
+          <div class="cs-tactic"><div class="n">06</div><div class="t">Encouraging customer reposts (UGC)</div></div>
+        </div>
+      </div>
+      <div class="cs-side">
+        <div class="cs-pillar"><div class="h">Four observed customer behaviours</div></div>
+        <div class="cs-tactic-grid">
+          <div class="cs-tactic"><div class="n">A</div><div class="t">More likely to try new beverages after seeing them online</div></div>
+          <div class="cs-tactic"><div class="n">B</div><div class="t">Positive online reviews increased brand trust</div></div>
+          <div class="cs-tactic"><div class="n">C</div><div class="t">Attracted by premium-quality + modern-lifestyle association</div></div>
+          <div class="cs-tactic"><div class="n">D</div><div class="t">Social promos drove repeat café visits</div></div>
+        </div>
+        <div class="cs-pillar" style="border-left-color: var(--ink);">
+          <div class="h">The competitive tension</div>
+          <div class="b">Fights for shelf-space-of-mind against <strong>Starbucks</strong> internationally and a wave of local Indian café chains domestically. A bad review online can move a customer to a competitor in one tap.</div>
+        </div>
+        <div class="cs-result">
+          <div class="r-tag">The proof</div>
+          <div class="r-text">A regional brand can <em>own</em> a category on social before it ever opens a store in your city.</div>
+        </div>
+      </div>
+    </div>
+    <button class="next-btn">Next: The new funnel <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 15 THE FUNNEL -->
+  <section class="section" id="s13">
+    <div class="sec-eyebrow"><span class="num">22</span><span class="dot"></span><span>The new funnel</span><span class="rule"></span></div>
+    <h2 class="sec-title">How a purchase actually happens now.</h2>
+    <p class="sec-lede">Five stages. Each stage has a primary lever — get the lever wrong and the customer drops out.</p>
+    <div class="funnel-wrap">
+      <div class="funnel">
+        <div class="fnl-stage"><div class="fnl-num">01 / DISCOVER</div><div class="fnl-h">Scroll the feed</div><div class="fnl-b">A reel, an ad, a friend's post. Visual and passive — buyer didn't ask for it.</div></div>
+        <div class="fnl-stage"><div class="fnl-num">02 / TRUST</div><div class="fnl-h">Check the reviews</div><div class="fnl-b">Ratings, comments, influencer takes. This is the gate that closes most sales.</div></div>
+        <div class="fnl-stage"><div class="fnl-num">03 / TRY</div><div class="fnl-h">Pull the trigger</div><div class="fnl-b">Usually a small first purchase. Discount or offer often pushes it over the edge.</div></div>
+        <div class="fnl-stage"><div class="fnl-num">04 / SHARE</div><div class="fnl-h">Post the result</div><div class="fnl-b">The buyer becomes the next person's discovery step. Free distribution.</div></div>
+        <div class="fnl-stage"><div class="fnl-num">05 / LOOP</div><div class="fnl-h">Repeat &amp; recommend</div><div class="fnl-b">Brand stays in the feed; the customer comes back. Loyalty is now a content loop.</div></div>
+      </div>
+    </div>
+    <button class="next-btn">Next: A conversation <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 16 CONVERSATION (broadcast vs dialogue) -->
+  <section class="section" id="s_conv">
+    <div class="sec-eyebrow"><span class="num">23</span><span class="dot"></span><span>A conversation</span><span class="rule"></span></div>
+    <h2 class="sec-title">Marketing is now a <em>conversation.</em></h2>
+    <p class="sec-lede">The shape of the network changed. The brand used to talk <em>at</em> people. Now it talks <em>with</em> a community that talks among itself.</p>
+    <div class="conv-layout">
+      <div class="conv-panel">
+        <div class="conv-tag">Then — Broadcast</div>
+        <div class="conv-h">One voice, many ears.</div>
+        <svg class="conv-svg" viewBox="0 0 360 280" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arrowGrey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#7A7064"/>
+            </marker>
+          </defs>
+          <!-- Brand at top -->
+          <rect x="150" y="20" width="60" height="34" fill="#1B1714" rx="2"/>
+          <text x="180" y="42" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#F2ECDE" font-weight="700">BRAND</text>
+          <!-- Audience at bottom -->
+          <g fill="#7A7064">
+            <circle cx="50" cy="220" r="14"/><circle cx="110" cy="220" r="14"/>
+            <circle cx="170" cy="220" r="14"/><circle cx="230" cy="220" r="14"/><circle cx="310" cy="220" r="14"/>
+          </g>
+          <!-- Arrows (one-way) -->
+          <g stroke="#7A7064" stroke-width="1.6" fill="none" marker-end="url(#arrowGrey)">
+            <line x1="160" y1="56" x2="60" y2="205"/>
+            <line x1="170" y1="56" x2="115" y2="205"/>
+            <line x1="180" y1="56" x2="172" y2="205"/>
+            <line x1="190" y1="56" x2="225" y2="205"/>
+            <line x1="200" y1="56" x2="300" y2="205"/>
+          </g>
+        </svg>
+        <div class="conv-note">TV, radio, print. The brand spoke. The audience listened. Replies were rare and slow.</div>
+      </div>
+      <div class="conv-panel now">
+        <div class="conv-tag">Now — Dialogue</div>
+        <div class="conv-h">Every voice connects to <em>every</em> other.</div>
+        <svg class="conv-svg" viewBox="0 0 360 280" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#D63E2A"/>
+            </marker>
+          </defs>
+          <!-- Brand centered -->
+          <rect x="150" y="125" width="60" height="34" fill="#1B1714" rx="2"/>
+          <text x="180" y="147" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#F2ECDE" font-weight="700">BRAND</text>
+          <!-- Audience around -->
+          <g fill="#D63E2A">
+            <circle cx="55" cy="60" r="13"/>
+            <circle cx="305" cy="60" r="13"/>
+            <circle cx="35" cy="200" r="13"/>
+            <circle cx="180" cy="245" r="13"/>
+            <circle cx="325" cy="200" r="13"/>
+          </g>
+          <!-- Brand <-> audience (bidirectional) -->
+          <g stroke="#D63E2A" stroke-width="1.6" fill="none" marker-end="url(#arrowRed)" marker-start="url(#arrowRed)">
+            <line x1="155" y1="135" x2="68" y2="68"/>
+            <line x1="205" y1="135" x2="292" y2="68"/>
+            <line x1="155" y1="155" x2="48" y2="192"/>
+            <line x1="180" y1="160" x2="180" y2="232"/>
+            <line x1="205" y1="155" x2="312" y2="192"/>
+          </g>
+          <!-- Audience <-> audience -->
+          <g stroke="#1B1714" stroke-width="1" fill="none" stroke-dasharray="3,3" opacity="0.5">
+            <line x1="55" y1="60" x2="305" y2="60"/>
+            <line x1="55" y1="60" x2="35" y2="200"/>
+            <line x1="305" y1="60" x2="325" y2="200"/>
+            <line x1="35" y1="200" x2="180" y2="245"/>
+            <line x1="180" y1="245" x2="325" y2="200"/>
+          </g>
+        </svg>
+        <div class="conv-note">Comments, DMs, reposts, reviews. Buyers reply to brands &mdash; and to <em>each other</em>.</div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Double-edged <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 17 DOUBLE-EDGED -->
+  <section class="section" id="s_double">
+    <div class="sec-eyebrow"><span class="num">24</span><span class="dot"></span><span>Double-edged</span><span class="rule"></span></div>
+    <h2 class="sec-title">The same speed cuts <em>both ways.</em></h2>
+    <p class="sec-lede">The mechanism that builds a brand overnight also breaks one. A bad review now travels at the same speed as a good one — sometimes faster.</p>
+    <div class="de-layout">
+      <svg class="de-svg" viewBox="0 0 560 460" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <marker id="rArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#D63E2A"/>
+          </marker>
+        </defs>
+        <!-- Outer ring of 4 nodes connected by arrows in a loop -->
+        <g font-family="DM Sans" font-size="12.5" fill="#1B1714">
+          <!-- Top node: Customer experience -->
+          <rect x="200" y="20" width="160" height="68" fill="#F2ECDE" stroke="#1B1714" stroke-width="1.6" rx="3"/>
+          <text x="280" y="44" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#D63E2A" font-weight="700" letter-spacing="2">01 / EXPERIENCE</text>
+          <text x="280" y="66" text-anchor="middle" font-weight="600">A customer interacts</text>
+          <text x="280" y="81" text-anchor="middle">with the brand — good or bad</text>
+          <!-- Right node: Posts review -->
+          <rect x="380" y="180" width="160" height="68" fill="#F2ECDE" stroke="#1B1714" stroke-width="1.6" rx="3"/>
+          <text x="460" y="204" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#D63E2A" font-weight="700" letter-spacing="2">02 / POSTS</text>
+          <text x="460" y="226" text-anchor="middle" font-weight="600">Shares it online</text>
+          <text x="460" y="241" text-anchor="middle">review · reel · screenshot</text>
+          <!-- Bottom node: Spreads -->
+          <rect x="200" y="340" width="160" height="68" fill="#F2ECDE" stroke="#1B1714" stroke-width="1.6" rx="3"/>
+          <text x="280" y="364" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#D63E2A" font-weight="700" letter-spacing="2">03 / SPREADS</text>
+          <text x="280" y="386" text-anchor="middle" font-weight="600">Others see &amp; react</text>
+          <text x="280" y="401" text-anchor="middle">comment · share · reply</text>
+          <!-- Left node: Shapes perception -->
+          <rect x="20" y="180" width="160" height="68" fill="#F2ECDE" stroke="#1B1714" stroke-width="1.6" rx="3"/>
+          <text x="100" y="204" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#D63E2A" font-weight="700" letter-spacing="2">04 / SHAPES</text>
+          <text x="100" y="226" text-anchor="middle" font-weight="600">Next buyer's view</text>
+          <text x="100" y="241" text-anchor="middle">of the brand</text>
+        </g>
+        <!-- Curved arrows between nodes (clockwise loop) -->
+        <g fill="none" stroke="#D63E2A" stroke-width="2" marker-end="url(#rArrow)">
+          <path d="M 360,54 Q 470,80 460,180"/>
+          <path d="M 460,248 Q 470,310 360,374"/>
+          <path d="M 200,374 Q 90,310 100,248"/>
+          <path d="M 100,180 Q 90,80 200,54"/>
+        </g>
+        <!-- Center label -->
+        <g font-family="Fraunces" font-style="italic">
+          <text x="280" y="215" text-anchor="middle" font-size="22" font-weight="600" fill="#D63E2A">Reputation</text>
+          <text x="280" y="240" text-anchor="middle" font-size="22" font-weight="600" fill="#D63E2A">flywheel</text>
+          <text x="280" y="265" text-anchor="middle" font-family="JetBrains Mono" font-style="normal" font-size="10" letter-spacing="2" fill="#7A7064">SPINS BOTH WAYS</text>
+        </g>
+      </svg>
+      <div class="de-side">
+        <div class="de-card">
+          <div class="h">The upside</div>
+          <div class="b">A good experience becomes <em>free distribution</em>. Posts, tags, screenshots turn customers into ad agencies the brand never paid.</div>
+        </div>
+        <div class="de-card">
+          <div class="h">The downside</div>
+          <div class="b">A bad experience moves <em>just as fast</em>. Negative reviews, viral complaints, and screenshots can damage a brand reputation in hours.</div>
+        </div>
+        <div class="de-card">
+          <div class="h">What this requires</div>
+          <div class="b">Active monitoring, fast public replies, real transparency. The brands that win the loop don't try to <em>silence</em> it &mdash; they participate in it honestly.</div>
+        </div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Findings <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 18 FINDINGS -->
+  <section class="section" id="s14">
+    <div class="sec-eyebrow"><span class="num">25</span><span class="dot"></span><span>Findings</span><span class="rule"></span></div>
+    <h2 class="sec-title">Six things the data <em>actually</em> said.</h2>
+    <div class="find-grid">
+      <div class="find">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3.2"/></svg>
+        <div class="find-t"><strong>01 / Visual platforms dominate.</strong> Instagram + YouTube together cover the relevant audience. The rest is rounding error.</div>
+      </div>
+      <div class="find">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/><path d="M12 5c4 0 7 3 7 7"/><path d="M12 2c5.5 0 10 4.5 10 10"/><path d="M12 8c2.2 0 4 1.8 4 4"/></svg>
+        <div class="find-t"><strong>02 / Exposure is constant.</strong> 85% of respondents see product ads often or always. Discovery is now passive.</div>
+      </div>
+      <div class="find">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M3 7h3l2 11h11l2-8H8"/><circle cx="10" cy="21" r="1.5" fill="currentColor" stroke="none"/><circle cx="18" cy="21" r="1.5" fill="currentColor" stroke="none"/></svg>
+        <div class="find-t"><strong>03 / Conversion is real.</strong> 76% have bought after seeing something on social &mdash; not just considered, <em>bought</em>.</div>
+      </div>
+      <div class="find">
+        <svg class="ic" viewBox="0 0 24 24"><polygon points="12,2 14.5,9 22,9 16,13.5 18.5,21 12,17 5.5,21 8,13.5 2,9 9.5,9"/></svg>
+        <div class="find-t"><strong>04 / Reviews are the gate.</strong> 47.6% rank them as the #1 factor. Trust beats every other signal.</div>
+      </div>
+      <div class="find">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M12 2H2v10l11 11 10-10z"/><circle cx="7" cy="7" r="1.6" fill="currentColor" stroke="none"/></svg>
+        <div class="find-t"><strong>05 / Discounts unlock action.</strong> A close second at 28.6%. Urgency closes the awareness-to-purchase gap.</div>
+      </div>
+      <div class="find">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><path d="M2 21c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M14 18c0-1.8 1.4-3.2 3.2-3.2s3.8 1.4 3.8 3.2"/></svg>
+        <div class="find-t"><strong>06 / Young consumers lead.</strong> Students and young professionals are the most-influenced and the most-likely to share back.</div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Recommendations <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 19 RECOMMENDATIONS -->
+  <section class="section" id="s15">
+    <div class="sec-eyebrow"><span class="num">26</span><span class="dot"></span><span>Recommendations</span><span class="rule"></span></div>
+    <h2 class="sec-title">Eight moves a brand can make tomorrow.</h2>
+    <p class="sec-lede">Ranked roughly by leverage — what produces the most change for the least cost.</p>
+    <div class="rec-grid">
+      <div class="rec">
+        <svg class="ic" viewBox="0 0 24 24"><polygon points="12,2 14.5,9 22,9 16,13.5 18.5,21 12,17 5.5,21 8,13.5 2,9 9.5,9"/></svg>
+        <div class="rec-n">01 / LEVERAGE</div>
+        <div class="rec-h">Make reviews unmissable.</div>
+        <div class="rec-b">It&rsquo;s the #1 factor in 47.6% of decisions. Solicit them, surface them on every page, respond to negatives publicly.</div>
+      </div>
+      <div class="rec">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="4"/><rect x="8" y="3" width="8" height="4" rx="1"/></svg>
+        <div class="rec-n">02 / LEVERAGE</div>
+        <div class="rec-h">Lead with visuals.</div>
+        <div class="rec-b">Photo &gt; copy. Reel &gt; photo. Invest where the audience already pays attention.</div>
+      </div>
+      <div class="rec">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="12" cy="12" r="3.5" fill="currentColor" stroke="none"/></svg>
+        <div class="rec-n">03 / LEVERAGE</div>
+        <div class="rec-h">Right-size influencers.</div>
+        <div class="rec-b">Many credible micro-voices outperform one celebrity (the Daniel Wellington playbook).</div>
+      </div>
+      <div class="rec">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><line x1="8.5" y1="10.5" x2="15.5" y2="7"/><line x1="8.5" y1="13.5" x2="15.5" y2="17"/></svg>
+        <div class="rec-n">04 / LEVERAGE</div>
+        <div class="rec-h">Engineer share-back.</div>
+        <div class="rec-b">Give people something worth posting &mdash; a name on the cup, a custom moment, a hashtag.</div>
+      </div>
+      <div class="rec">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12,6 12,12 16,14"/></svg>
+        <div class="rec-n">05 / TACTIC</div>
+        <div class="rec-h">Time the offer.</div>
+        <div class="rec-b">Discounts work &mdash; but only with urgency. A limited window converts; a permanent sale erodes price.</div>
+      </div>
+      <div class="rec">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>
+        <div class="rec-n">06 / TACTIC</div>
+        <div class="rec-h">Personalise the feed.</div>
+        <div class="rec-b">Use the platform&rsquo;s targeting. A generic ad to everyone loses to a specific ad to someone.</div>
+      </div>
+      <div class="rec">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M21 11c0 4-4 7-9 7-1.4 0-2.7-.3-3.9-.7L3 19l1.4-3.4C3.5 14.2 3 12.7 3 11c0-4 4-7 9-7s9 3 9 7z"/></svg>
+        <div class="rec-n">07 / TACTIC</div>
+        <div class="rec-h">Reply, don&rsquo;t broadcast.</div>
+        <div class="rec-b">DMs, comment replies, polls. Two-way communication is the moat.</div>
+      </div>
+      <div class="rec">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+        <div class="rec-n">08 / HYGIENE</div>
+        <div class="rec-h">Be mobile-first &amp; honest.</div>
+        <div class="rec-b">Phone-optimised everything. Don&rsquo;t fake reviews or inflate claims &mdash; social punishes that fast.</div>
+      </div>
+    </div>
+    <button class="next-btn">Next: Limitations <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 20 LIMITATIONS -->
+  <section class="section" id="s16">
+    <div class="sec-eyebrow"><span class="num">27</span><span class="dot"></span><span>Limitations</span><span class="rule"></span></div>
+    <h2 class="sec-title">What the data <em>can't</em> tell you.</h2>
+    <p class="sec-lede">Four categories of constraint. The findings stay useful &mdash; within these.</p>
+    <div class="lim-cats">
+      <div class="lim-cat">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>
+        <div class="label">01 / Scope</div>
+        <div class="h">Who we asked.</div>
+        <div class="pts">
+          <div class="pt">21 respondents &mdash; directional, not definitive</div>
+          <div class="pt">Mostly Ludhiana &amp; North India</div>
+          <div class="pt">Gen Z &amp; young professionals dominate the sample</div>
+        </div>
+      </div>
+      <div class="lim-cat">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M9 3v6l-5 9a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3l-5-9V3"/><line x1="7" y1="3" x2="17" y2="3"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+        <div class="label">02 / Method</div>
+        <div class="h">How we asked.</div>
+        <div class="pts">
+          <div class="pt">Self-report &mdash; answers can be aspirational</div>
+          <div class="pt">Percentage analysis only &mdash; no regression or correlation</div>
+          <div class="pt">No industry-by-industry comparative breakdown</div>
+        </div>
+      </div>
+      <div class="lim-cat">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12,6 12,12 16,14"/></svg>
+        <div class="label">03 / Time &amp; reach</div>
+        <div class="h">When &amp; where.</div>
+        <div class="pts">
+          <div class="pt">A 2026 snapshot &mdash; trends shift fast</div>
+          <div class="pt">Four platforms only &mdash; no TikTok, LinkedIn, Pinterest</div>
+          <div class="pt">Findings age along with the platforms themselves</div>
+        </div>
+      </div>
+      <div class="lim-cat">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M5 8h14"/><path d="M3 12c0 2 1.5 4 4 4s4-2 4-4"/><path d="M13 12c0 2 1.5 4 4 4s4-2 4-4"/></svg>
+        <div class="label">04 / Context</div>
+        <div class="h">What it isolates.</div>
+        <div class="pts">
+          <div class="pt">Measures only the social slice of decisions</div>
+          <div class="pt">Price, quality, family also drive purchases</div>
+          <div class="pt">Academic budget &mdash; no paid panels or premium tools</div>
+        </div>
+      </div>
+    </div>
+    <div class="lim-footer">
+      <div class="h">Read accordingly</div>
+      <div class="b">A <em>useful</em> study for direction, not for policy. Treat the percentages as a strong signal at this scale &mdash; a hypothesis worth testing bigger before any brand bets on it.</div>
+    </div>
+    <button class="next-btn">Next: Conclusion <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 21 CONCLUSION -->
+  <section class="section s-closing" id="s17">
+    <div class="closing-frame">
+      <div class="closing-meta">Conclusion</div>
+      <h2 class="closing-title">Social media is the <em>shelf</em> now.</h2>
+      <p class="closing-sub">
+        The buying decision is made before the wallet opens — in the feed, in the comments, in someone else's video. Brands that win this decade aren't the loudest. They're the ones the audience would post about <em>without being paid to.</em>
+      </p>
+    </div>
+    <button class="next-btn">References <span class="arrow">↓</span></button>
+  </section>
+
+  <!-- 30 REFERENCES -->
+  <section class="section" id="s18">
+    <div class="sec-eyebrow"><span class="num">28</span><span class="dot"></span><span>References</span><span class="rule"></span></div>
+    <h2 class="sec-title">Where this came from.</h2>
+    <p class="sec-lede">Grouped by source type. <em>Primary</em> is the survey data; the rest framed it.</p>
+    <div class="ref-grid">
+      <div class="ref-item" data-type="primary"><span class="n">22</span><span class="src"><strong>Primary survey</strong> &mdash; Google Forms &middot; 21 respondents &middot; May 2026<span class="tag">PRIMARY</span></span></div>
+      <div class="ref-item" data-type="academic"><span class="n">01</span><span class="src"><strong>Kaplan &amp; Haenlein</strong> (2010). Users of the world, unite! &mdash; <em>Business Horizons</em><span class="tag">ACADEMIC</span></span></div>
+      <div class="ref-item" data-type="academic"><span class="n">02</span><span class="src"><strong>Mangold &amp; Faulds</strong> (2009). Social media: the new hybrid element &mdash; <em>Business Horizons</em><span class="tag">ACADEMIC</span></span></div>
+      <div class="ref-item" data-type="academic"><span class="n">03</span><span class="src"><strong>De Veirman et al.</strong> (2017). Influencer marketing &mdash; <em>Int&rsquo;l Journal of Advertising</em><span class="tag">ACADEMIC</span></span></div>
+      <div class="ref-item" data-type="academic"><span class="n">11</span><span class="src"><strong>Harvard Business Review</strong> (2022). Consumer decision-making in the digital age<span class="tag">ACADEMIC</span></span></div>
+      <div class="ref-item" data-type="academic"><span class="n">18</span><span class="src"><strong>Journal of Marketing Research</strong> &mdash; various articles<span class="tag">ACADEMIC</span></span></div>
+      <div class="ref-item" data-type="academic"><span class="n">19</span><span class="src"><strong>Int&rsquo;l Journal of Research in Marketing</strong> &mdash; various studies<span class="tag">ACADEMIC</span></span></div>
+      <div class="ref-item" data-type="industry"><span class="n">04</span><span class="src"><strong>Deloitte</strong> (2023). Digital Consumer Trends Report<span class="tag">INDUSTRY</span></span></div>
+      <div class="ref-item" data-type="industry"><span class="n">05</span><span class="src"><strong>McKinsey &amp; Co.</strong> (2022). The Future of Digital Marketing<span class="tag">INDUSTRY</span></span></div>
+      <div class="ref-item" data-type="industry"><span class="n">06</span><span class="src"><strong>Statista</strong> (2024). Social media usage statistics<span class="tag">INDUSTRY</span></span></div>
+      <div class="ref-item" data-type="industry"><span class="n">07</span><span class="src"><strong>Pew Research Center</strong> (2023). Social media and consumer behavior<span class="tag">INDUSTRY</span></span></div>
+      <div class="ref-item" data-type="industry"><span class="n">08</span><span class="src"><strong>HubSpot</strong> (2023). State of Marketing Report<span class="tag">INDUSTRY</span></span></div>
+      <div class="ref-item" data-type="industry"><span class="n">09</span><span class="src"><strong>Sprout Social</strong> (2023). Social media engagement insights<span class="tag">INDUSTRY</span></span></div>
+      <div class="ref-item" data-type="industry"><span class="n">12</span><span class="src"><strong>Google Think Insights</strong> (2023). Consumer behavior trends<span class="tag">INDUSTRY</span></span></div>
+      <div class="ref-item" data-type="industry"><span class="n">13</span><span class="src"><strong>Nielsen</strong> (2022). Trust in advertising<span class="tag">INDUSTRY</span></span></div>
+      <div class="ref-item" data-type="industry"><span class="n">14</span><span class="src"><strong>eMarketer</strong> (2023). Social media marketing trends<span class="tag">INDUSTRY</span></span></div>
+      <div class="ref-item" data-type="trade"><span class="n">10</span><span class="src"><strong>Forbes</strong> (2023). Impact of influencer marketing on brands<span class="tag">TRADE</span></span></div>
+      <div class="ref-item" data-type="trade"><span class="n">15</span><span class="src"><strong>Business Insider</strong> (2023). Influencer economy growth<span class="tag">TRADE</span></span></div>
+      <div class="ref-item" data-type="trade"><span class="n">16</span><span class="src"><strong>Social Media Today</strong> (2023). Consumer engagement strategies<span class="tag">TRADE</span></span></div>
+      <div class="ref-item" data-type="trade"><span class="n">17</span><span class="src"><strong>Adweek</strong> (2022). Digital advertising insights<span class="tag">TRADE</span></span></div>
+      <div class="ref-item" data-type="trade"><span class="n">20</span><span class="src"><strong>ResearchGate / Academia.edu</strong> &mdash; consumer behaviour papers<span class="tag">TRADE</span></span></div>
+      <div class="ref-item" data-type="trade"><span class="n">21</span><span class="src"><strong>Investopedia</strong> &mdash; marketing &amp; consumer behaviour concepts<span class="tag">TRADE</span></span></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+  const main = document.getElementById('main');
+  const sections = Array.from(document.querySelectorAll('.section'));
+  const navItems = Array.from(document.querySelectorAll('.dm-item'));
+  const pageIndicator = document.getElementById('page-indicator');
+  const sectionNav = document.getElementById('sectionNav');
+  const snTrigger = document.getElementById('snTrigger');
+  const snMenu = document.getElementById('snMenu');
+  const snLabel = document.getElementById('snLabel');
+  const sectionNames = navItems.map(it => it.querySelector('.dm-name').textContent);
+  const total = sections.length;
+
+  function scrollToSection(idx) {
+    const target = sections[idx];
+    if (!target) return;
+    main.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+  }
+
+  navItems.forEach((item, idx) => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      scrollToSection(idx);
+      sectionNav.classList.remove('open');
+    });
+  });
+
+  document.querySelectorAll('.next-btn, .begin-btn, [data-next]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      if (btn.dataset.next !== undefined) {
+        scrollToSection(parseInt(btn.dataset.next, 10));
+      } else {
+        const parent = btn.closest('.section');
+        const idx = sections.indexOf(parent);
+        scrollToSection(idx + 1);
+      }
+    });
+  });
+
+  document.querySelectorAll('.total-count').forEach(el => { el.textContent = total; });
+
+  function setActive(idx) {
+    navItems.forEach((it, i) => it.classList.toggle('active', i === idx));
+    if (pageIndicator) pageIndicator.textContent = String(idx + 1).padStart(2, '0');
+    if (snLabel && sectionNames[idx]) snLabel.textContent = sectionNames[idx];
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    let bestIdx = -1, bestRatio = 0;
+    entries.forEach(entry => {
+      if (entry.isIntersecting && entry.intersectionRatio > bestRatio) {
+        bestRatio = entry.intersectionRatio;
+        bestIdx = sections.indexOf(entry.target);
+      }
+    });
+    if (bestIdx >= 0) setActive(bestIdx);
+  }, { root: main, threshold: [0.4, 0.6, 0.8] });
+  sections.forEach(s => io.observe(s));
+  setActive(0);
+
+  document.addEventListener('keydown', (e) => {
+    const current = navItems.findIndex(n => n.classList.contains('active'));
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+      if (current < total - 1) { e.preventDefault(); scrollToSection(current + 1); }
+    } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+      if (current > 0) { e.preventDefault(); scrollToSection(current - 1); }
+    } else if (e.key === 'Home') { e.preventDefault(); scrollToSection(0); }
+    else if (e.key === 'End') { e.preventDefault(); scrollToSection(total - 1); }
+  });
+
+  if (snTrigger && snMenu && sectionNav) {
+    snTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = sectionNav.classList.toggle('open');
+      snTrigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    document.addEventListener('click', (e) => {
+      if (!sectionNav.contains(e.target)) {
+        sectionNav.classList.remove('open');
+        snTrigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# temp scripts
+_check.py
+_pages.py
+_convert.py
+_renumber.py
+_renumber_dropdown.py
+_del_section.py
+_source.txt
+_pdf_pages/
+
+# original source materials
+"project inder.docx"
+project_inder_preview.html
+
+# OS
+Thumbs.db
+.DS_Store
