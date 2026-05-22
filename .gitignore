@@ -9,7 +9,7 @@ _source.txt
 _pdf_pages/
 
 # original source materials
-"project inder.docx"
+project*.docx
 project_inder_preview.html
 
 # OS
