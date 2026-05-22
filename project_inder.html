@@ -32,17 +32,22 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { -webkit-text-size-adjust: 100%; }
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--paper);
+}
 body {
   font-family: var(--sans);
-  background: var(--paper);
   color: var(--ink);
   font-size: 17px;
   line-height: 1.5;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
-  height: 100vh;
 }
 
 /* paper grain */
@@ -174,11 +179,15 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: -0.005em;
 }
 
-/* MAIN */
+/* MAIN — fixed 1440x810 frame, scaled to viewport via JS (--deck-scale) */
 .main {
-  width: 100vw;
-  height: 100vh;
-  margin-top: 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 1440px;
+  height: 810px;
+  transform: translate(-50%, -50%) scale(var(--deck-scale, 1));
+  transform-origin: center center;
   overflow-y: scroll;
   overflow-x: hidden;
   scroll-snap-type: y mandatory;
@@ -199,10 +208,10 @@ a { color: inherit; text-decoration: none; }
 /* SECTION SHELL */
 .section {
   scroll-snap-align: start;
-  width: 100vw;
-  height: 100vh;
-  min-height: 100vh;
-  max-height: 100vh;
+  width: 1440px;
+  height: 810px;
+  min-height: 810px;
+  max-height: 810px;
   padding: 40px 56px 56px;
   display: flex;
   flex-direction: column;
@@ -1545,10 +1554,12 @@ a { color: inherit; text-decoration: none; }
 .ig-evidence img {
   width: 100%;
   height: auto;
-  max-height: 260px;
+  max-height: 220px;
   object-fit: contain;
   background: white;
 }
+.cs-side .ig-evidence + .ig-evidence img { max-height: 180px; }
+.cs-side .ig-evidence { padding: 10px; }
 .ig-evidence .cap {
   font-family: var(--mono);
   font-size: 10.5px;
@@ -1623,7 +1634,7 @@ a { color: inherit; text-decoration: none; }
   margin: 0;
 }
 @media print {
-  html, body { width: 1440px; height: auto; overflow: visible; background: var(--paper); }
+  html, body { width: 1440px; height: auto; overflow: visible; background: var(--paper); display: block; }
   body::before { display: none; }
   .topbar { display: none; }
   .main {
@@ -1632,6 +1643,7 @@ a { color: inherit; text-decoration: none; }
     height: auto;
     overflow: visible;
     scroll-snap-type: none;
+    transform: none;
   }
   .main::-webkit-scrollbar { display: none; }
   .section {
@@ -2677,6 +2689,15 @@ a { color: inherit; text-decoration: none; }
 <script>
 (function(){
   'use strict';
+
+  // Fit-to-viewport: scale the 1440x810 frame to whatever the viewport actually is.
+  function setScale() {
+    const s = Math.min(window.innerWidth / 1440, window.innerHeight / 810);
+    document.documentElement.style.setProperty('--deck-scale', s);
+  }
+  setScale();
+  window.addEventListener('resize', setScale);
+
   const main = document.getElementById('main');
   const sections = Array.from(document.querySelectorAll('.section'));
   const navItems = Array.from(document.querySelectorAll('.dm-item'));
